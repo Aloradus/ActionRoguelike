@@ -33,12 +33,22 @@ protected:
 	UInputMappingContext* ARCharacterMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* MoveForwardAction;
+	UInputAction* IAMoveForward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* IAMoveBackward;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* IAYawnInput;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(const FInputActionValue& Value);
+
+	void MoveBackward(const FInputActionValue& Value);
+
+	void AddYawnInput(const FInputActionValue& Value);
 
 	//void AddControllerYawInput(float Value);
 

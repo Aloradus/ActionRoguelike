@@ -35,13 +35,24 @@ void AARCharacter::BeginPlay()
 	}
 }
 
+//Move character forward
 void AARCharacter::MoveForward(const FInputActionValue& Value)
 {
-	const float wValue = Value.Get<FInputActionValue::Axis1D>();
+	//const float wValue = Value.Get<FInputActionValue::Axis1D>();
 	//UE_LOG(LogTemp, Warning, TEXT("IA MOVE TRIGGERED"));
 	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
+//Move character backwards
+void AARCharacter::MoveBackward(const FInputActionValue& Value)
+{
+	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
+}
+
+void AARCharacter::AddYawnInput(const FInputActionValue& Value)
+{
+	AddControllerYawInput(Value.Get<FVector2D>().X);
+}
 
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
@@ -57,9 +68,10 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		//Moving
-		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
-
+		//Bind movement
+		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
+		EnhancedInputComponent->BindAction(IAMoveBackward, ETriggerEvent::Triggered, this, &AARCharacter::MoveBackward);
+		EnhancedInputComponent->BindAction(IAYawnInput, ETriggerEvent::Triggered, this, &AARCharacter::AddYawnInput);
 
 	}
 
