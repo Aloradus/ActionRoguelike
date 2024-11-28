@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "ARCharacter.generated.h"
 
+class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
+class UInputMappingContext;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARCharacter : public ACharacter
@@ -26,12 +29,18 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* ARCharacterMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveForwardAction;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void MoveForward(float Value);
+	void MoveForward(const FInputActionValue& Value);
 
-	void AddControllerYawInput(float Value);
+	//void AddControllerYawInput(float Value);
 
 public:	
 	// Called every frame

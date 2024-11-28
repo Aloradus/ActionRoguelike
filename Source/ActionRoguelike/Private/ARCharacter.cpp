@@ -4,6 +4,8 @@
 #include "ARCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 
 // Sets default values
@@ -23,18 +25,23 @@ AARCharacter::AARCharacter()
 void AARCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(ARCharacterMappingContext, 0);
+		}
+	}
 }
 
-void AARCharacter::MoveForward(float Value)
+void AARCharacter::MoveForward(const FInputActionValue& Value)
 {
-	AddMovementInput(GetActorForwardVector(), Value);
+	const float wValue = Value.Get<FInputActionValue::Axis1D>();
+	//UE_LOG(LogTemp, Warning, TEXT("IA MOVE TRIGGERED"));
+	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
-void AARCharacter::AddControllerYawInput(float Value)
-{
-	Super::AddControllerYawInput(Value);
-}
 
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
@@ -48,8 +55,16 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		//Moving
+		EnhancedInputComponent->BindAction(MoveForwardAction, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
 
-	PlayerInputComponent->BindAxis("Turn", this, &AARCharacter::AddControllerYawInput);
+
+	}
+
+	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
+
+	//PlayerInputComponent->BindAxis("Turn", this, &AARCharacter::AddControllerYawInput);
 }
 
