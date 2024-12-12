@@ -44,20 +44,25 @@ void AARCharacter::BeginPlay()
 //Move character forward
 void AARCharacter::MoveForward(const FInputActionValue& Value)
 {
-	//const float wValue = Value.Get<FInputActionValue::Axis1D>();
-	//UE_LOG(LogTemp, Warning, TEXT("IA MOVE TRIGGERED"));
 	FRotator ControlRot = GetControlRotation();
 	ControlRot.Pitch = 0.0f;
 	ControlRot.Roll = 0.0f;
 
-	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
-	//AddMovementInput(ControlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
+	//AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
+	AddMovementInput(ControlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
 void AARCharacter::MoveRight(const FInputActionValue& Value)
 {
-	AddMovementInput(GetActorRightVector(), Value.Get<FInputActionValue::Axis1D>());
-	//AddControllerYawInput(Value.Get<FVector2D>().X);
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.0f;
+	ControlRot.Roll = 0.0f;
+
+	// x is always forward (Red)
+	// y is right (Green)
+	// z is up (Blue)
+	FVector RightVector = FRotationMatrix(ControlRot).GetScaledAxis(EAxis::Y);
+	AddMovementInput(RightVector, Value.Get<FInputActionValue::Axis1D>());
 }
 
 
@@ -80,7 +85,6 @@ void AARCharacter::Tick(float DeltaTime)
 	lineStart += GetActorRightVector() * 100.0f;
 	FVector actorDirectionLineEnd = lineStart + (GetActorForwardVector() * 100.0f);
 	DrawDebugDirectionalArrow(GetWorld(), lineStart, actorDirectionLineEnd, drawScale, FColor::Yellow, false, 0.0f, 0, thickness);
-
 
 	FVector controllerDirectionLineEnd = lineStart + (GetControlRotation().Vector() * 100.0f);
 	DrawDebugDirectionalArrow(GetWorld(), lineStart, controllerDirectionLineEnd, drawScale, FColor::Green, false, 0.0f, 0, thickness);
