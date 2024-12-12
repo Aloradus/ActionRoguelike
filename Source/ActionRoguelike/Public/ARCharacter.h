@@ -36,7 +36,7 @@ protected:
 	UInputAction* IAMoveForward;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	UInputAction* IAMoveTurn;
+	UInputAction* IAMoveRight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* IAYawnAndPitchInput;
@@ -46,7 +46,7 @@ protected:
 
 	void MoveForward(const FInputActionValue& Value);
 
-	void MoveTurn(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
 
 	void MoveLook(const FInputActionValue& Value);
 

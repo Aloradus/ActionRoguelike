@@ -54,7 +54,7 @@ void AARCharacter::MoveForward(const FInputActionValue& Value)
 	//AddMovementInput(ControlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
-void AARCharacter::MoveTurn(const FInputActionValue& Value)
+void AARCharacter::MoveRight(const FInputActionValue& Value)
 {
 	AddMovementInput(GetActorRightVector(), Value.Get<FInputActionValue::Axis1D>());
 	//AddControllerYawInput(Value.Get<FVector2D>().X);
@@ -98,7 +98,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		//Bind movement
 		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
-		EnhancedInputComponent->BindAction(IAMoveTurn, ETriggerEvent::Triggered, this, &AARCharacter::MoveTurn);
+		EnhancedInputComponent->BindAction(IAMoveRight, ETriggerEvent::Triggered, this, &AARCharacter::MoveRight);
 		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
 
 	}
