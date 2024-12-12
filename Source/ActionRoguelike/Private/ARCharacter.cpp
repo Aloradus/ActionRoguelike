@@ -46,25 +46,25 @@ void AARCharacter::MoveForward(const FInputActionValue& Value)
 {
 	//const float wValue = Value.Get<FInputActionValue::Axis1D>();
 	//UE_LOG(LogTemp, Warning, TEXT("IA MOVE TRIGGERED"));
-	FRotator controlRot = GetControlRotation();
-	AddMovementInput(controlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
-}
+	FRotator ControlRot = GetControlRotation();
+	ControlRot.Pitch = 0.0f;
+	ControlRot.Roll = 0.0f;
 
-//Move character backwards
-void AARCharacter::MoveBackward(const FInputActionValue& Value)
-{
 	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
+	//AddMovementInput(ControlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
 void AARCharacter::MoveTurn(const FInputActionValue& Value)
 {
-	AddControllerYawInput(Value.Get<FVector2D>().X);
+	AddMovementInput(GetActorRightVector(), Value.Get<FInputActionValue::Axis1D>());
+	//AddControllerYawInput(Value.Get<FVector2D>().X);
 }
 
 
-void AARCharacter::MoveLookUp(const FInputActionValue& Value)
+void AARCharacter::MoveLook(const FInputActionValue& Value)
 {
-	AddControllerPitchInput(Value.Get<FVector2D>().X);
+	AddControllerPitchInput(Value.Get<FVector2D>().Y);
+	AddControllerYawInput(Value.Get<FVector2D>().X);
 }
 
 // Called every frame
@@ -98,9 +98,8 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		//Bind movement
 		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
-		EnhancedInputComponent->BindAction(IAMoveBackward, ETriggerEvent::Triggered, this, &AARCharacter::MoveBackward);
-		EnhancedInputComponent->BindAction(IAYawnInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveTurn);
-		EnhancedInputComponent->BindAction(IAPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLookUp);
+		EnhancedInputComponent->BindAction(IAMoveTurn, ETriggerEvent::Triggered, this, &AARCharacter::MoveTurn);
+		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
 
 	}
 
