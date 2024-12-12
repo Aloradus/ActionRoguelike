@@ -6,6 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -15,10 +17,14 @@ AARCharacter::AARCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bUseControllerRotationYaw = false;
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +46,8 @@ void AARCharacter::MoveForward(const FInputActionValue& Value)
 {
 	//const float wValue = Value.Get<FInputActionValue::Axis1D>();
 	//UE_LOG(LogTemp, Warning, TEXT("IA MOVE TRIGGERED"));
-	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
+	FRotator controlRot = GetControlRotation();
+	AddMovementInput(controlRot.Vector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
 //Move character backwards
@@ -49,9 +56,15 @@ void AARCharacter::MoveBackward(const FInputActionValue& Value)
 	AddMovementInput(GetActorForwardVector(), Value.Get<FInputActionValue::Axis1D>());
 }
 
-void AARCharacter::AddYawnInput(const FInputActionValue& Value)
+void AARCharacter::MoveTurn(const FInputActionValue& Value)
 {
 	AddControllerYawInput(Value.Get<FVector2D>().X);
+}
+
+
+void AARCharacter::MoveLookUp(const FInputActionValue& Value)
+{
+	AddControllerPitchInput(Value.Get<FVector2D>().X);
 }
 
 // Called every frame
@@ -59,7 +72,22 @@ void AARCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/** Rotation Visuals **/
+	const float drawScale = 100.0f;
+	const float thickness = 5.0f;
+
+	FVector lineStart = GetActorLocation();
+	lineStart += GetActorRightVector() * 100.0f;
+	FVector actorDirectionLineEnd = lineStart + (GetActorForwardVector() * 100.0f);
+	DrawDebugDirectionalArrow(GetWorld(), lineStart, actorDirectionLineEnd, drawScale, FColor::Yellow, false, 0.0f, 0, thickness);
+
+
+	FVector controllerDirectionLineEnd = lineStart + (GetControlRotation().Vector() * 100.0f);
+	DrawDebugDirectionalArrow(GetWorld(), lineStart, controllerDirectionLineEnd, drawScale, FColor::Green, false, 0.0f, 0, thickness);
+
+
 }
+
 
 // Called to bind functionality to input
 void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -71,7 +99,8 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		//Bind movement
 		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
 		EnhancedInputComponent->BindAction(IAMoveBackward, ETriggerEvent::Triggered, this, &AARCharacter::MoveBackward);
-		EnhancedInputComponent->BindAction(IAYawnInput, ETriggerEvent::Triggered, this, &AARCharacter::AddYawnInput);
+		EnhancedInputComponent->BindAction(IAYawnInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveTurn);
+		EnhancedInputComponent->BindAction(IAPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLookUp);
 
 	}
 

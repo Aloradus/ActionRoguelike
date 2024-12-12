@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* IAYawnInput;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* IAPitchInput;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -48,7 +51,9 @@ protected:
 
 	void MoveBackward(const FInputActionValue& Value);
 
-	void AddYawnInput(const FInputActionValue& Value);
+	void MoveTurn(const FInputActionValue& Value);
+
+	void MoveLookUp(const FInputActionValue& Value);
 
 	//void AddControllerYawInput(float Value);
 
