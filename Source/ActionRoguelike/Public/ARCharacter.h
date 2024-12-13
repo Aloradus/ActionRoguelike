@@ -23,6 +23,9 @@ public:
 
 protected:
 
+	UPROPERTY(EditAnywhere, Category = "Projectials")
+	TSubclassOf<AActor> ProjectileClass;
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
@@ -41,6 +44,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* IAYawnAndPitchInput;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
+	UInputAction* IAPrimaryAttack;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -49,6 +55,8 @@ protected:
 	void MoveRight(const FInputActionValue& Value);
 
 	void MoveLook(const FInputActionValue& Value);
+
+	void PrimaryAttack(const FInputActionValue& Value);
 
 	//void AddControllerYawInput(float Value);
 

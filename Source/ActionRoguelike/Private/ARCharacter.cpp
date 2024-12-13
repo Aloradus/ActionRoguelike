@@ -72,6 +72,18 @@ void AARCharacter::MoveLook(const FInputActionValue& Value)
 	AddControllerYawInput(Value.Get<FVector2D>().X);
 }
 
+void AARCharacter::PrimaryAttack(const FInputActionValue& Value)
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
 {
@@ -87,6 +99,8 @@ void AARCharacter::Tick(float DeltaTime)
 	DrawDebugDirectionalArrow(GetWorld(), lineStart, actorDirectionLineEnd, drawScale, FColor::Yellow, false, 0.0f, 0, thickness);
 
 	FVector controllerDirectionLineEnd = lineStart + (GetControlRotation().Vector() * 100.0f);
+	controllerDirectionLineEnd.Z = lineStart.Z;
+
 	DrawDebugDirectionalArrow(GetWorld(), lineStart, controllerDirectionLineEnd, drawScale, FColor::Green, false, 0.0f, 0, thickness);
 
 
@@ -104,7 +118,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
 		EnhancedInputComponent->BindAction(IAMoveRight, ETriggerEvent::Triggered, this, &AARCharacter::MoveRight);
 		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
-
+		EnhancedInputComponent->BindAction(IAPrimaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryAttack);
 	}
 
 	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
