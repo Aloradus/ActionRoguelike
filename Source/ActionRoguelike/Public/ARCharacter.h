@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
 	UInputAction* IAPrimaryAttack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
+	UInputAction* IAJump;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -57,6 +60,8 @@ protected:
 	void MoveLook(const FInputActionValue& Value);
 
 	void PrimaryAttack(const FInputActionValue& Value);
+
+	void MoveJump(const FInputActionValue& Value);
 
 	//void AddControllerYawInput(float Value);
 

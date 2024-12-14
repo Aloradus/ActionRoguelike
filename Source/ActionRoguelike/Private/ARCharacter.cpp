@@ -84,6 +84,11 @@ void AARCharacter::PrimaryAttack(const FInputActionValue& Value)
 	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
 }
 
+void AARCharacter::MoveJump(const FInputActionValue& Value)
+{
+	Jump();
+}
+
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
 {
@@ -114,11 +119,12 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-		//Bind movement
+		//Bind movements
 		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
 		EnhancedInputComponent->BindAction(IAMoveRight, ETriggerEvent::Triggered, this, &AARCharacter::MoveRight);
 		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
 		EnhancedInputComponent->BindAction(IAPrimaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(IAJump, ETriggerEvent::Triggered, this, &AARCharacter::MoveJump);
 	}
 
 	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
