@@ -9,7 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "ARInteractionComponent.h"
-
+#include "Animation/AnimMontage.h"
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -77,14 +77,12 @@ void AARCharacter::MoveLook(const FInputActionValue& Value)
 
 void AARCharacter::PrimaryAttack(const FInputActionValue& Value)
 {
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	PlayAnimMontage(AttackAnim);
 
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+	//Eventually use Animation Events
+	//Set time call attack elapsed function what time reached
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AARCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
 }
 
 void AARCharacter::MoveJump(const FInputActionValue& Value)
@@ -95,6 +93,18 @@ void AARCharacter::MoveJump(const FInputActionValue& Value)
 void AARCharacter::PrimaryInteract(const FInputActionValue& Value)
 {
 	InteractionComp->PrimaryInteract();
+}
+
+void AARCharacter::PrimaryAttack_TimeElapsed()
+{
+	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
 }
 
 // Called every frame
