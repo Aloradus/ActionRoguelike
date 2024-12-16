@@ -14,8 +14,6 @@ AARExplodingBarrel::AARExplodingBarrel()
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>("MeshComp");
 	MeshComp->SetCollisionProfileName("PhysicsActor");
 	RootComponent = MeshComp;
-	MeshComp->OnComponentHit.AddDynamic(this, &AARExplodingBarrel::OnComponentHit);
-
 
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>("RadialForceComp");
 	RadialForceComp->ImpulseStrength = 2000.0f;
@@ -27,7 +25,8 @@ AARExplodingBarrel::AARExplodingBarrel()
 void AARExplodingBarrel::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	//bind to on hit event
+	MeshComp->OnComponentHit.AddDynamic(this, &AARExplodingBarrel::OnComponentHit);
 }
 
 // Called every frame

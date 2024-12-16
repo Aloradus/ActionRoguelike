@@ -11,6 +11,7 @@ class UInputAction;
 class UCameraComponent;
 class USpringArmComponent;
 class UInputMappingContext;
+class UARInteractionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARCharacter : public ACharacter
@@ -32,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(VisibleAnywhere)
+	UARInteractionComponent* InteractionComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* ARCharacterMappingContext;
 
@@ -49,6 +53,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
 	UInputAction* IAJump;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* IAInteract;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,6 +69,8 @@ protected:
 	void PrimaryAttack(const FInputActionValue& Value);
 
 	void MoveJump(const FInputActionValue& Value);
+
+	void PrimaryInteract(const FInputActionValue& Value);
 
 	//void AddControllerYawInput(float Value);
 

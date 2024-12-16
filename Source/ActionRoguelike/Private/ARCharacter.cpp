@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebugHelpers.h"
+#include "ARInteractionComponent.h"
 
 
 // Sets default values
@@ -22,6 +23,8 @@ AARCharacter::AARCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	InteractionComp = CreateDefaultSubobject<UARInteractionComponent>("InteractionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -89,6 +92,11 @@ void AARCharacter::MoveJump(const FInputActionValue& Value)
 	Jump();
 }
 
+void AARCharacter::PrimaryInteract(const FInputActionValue& Value)
+{
+	InteractionComp->PrimaryInteract();
+}
+
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
 {
@@ -107,8 +115,6 @@ void AARCharacter::Tick(float DeltaTime)
 	controllerDirectionLineEnd.Z = lineStart.Z;
 
 	DrawDebugDirectionalArrow(GetWorld(), lineStart, controllerDirectionLineEnd, drawScale, FColor::Green, false, 0.0f, 0, thickness);
-
-
 }
 
 
@@ -125,6 +131,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
 		EnhancedInputComponent->BindAction(IAPrimaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryAttack);
 		EnhancedInputComponent->BindAction(IAJump, ETriggerEvent::Triggered, this, &AARCharacter::MoveJump);
+		EnhancedInputComponent->BindAction(IAInteract, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryInteract);
 	}
 
 	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
