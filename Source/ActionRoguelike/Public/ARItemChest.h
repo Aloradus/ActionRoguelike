@@ -16,13 +16,13 @@ class ACTIONROGUELIKE_API AARItemChest : public AActor, public IARInteractiveInt
 	
 protected:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TargetPitch;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* LidMesh;
 
 	// Called when the game starts or when spawned

@@ -79,7 +79,7 @@ void AARCharacter::PrimaryAttack(const FInputActionValue& Value)
 {
 	PlayAnimMontage(AttackAnim);
 
-	//Eventually use Animation Events
+	//Eventually use Animation Events (Animation Notifies)
 	//Set time call attack elapsed function what time reached
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &AARCharacter::PrimaryAttack_TimeElapsed, 0.2f);
 
