@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UParticleSystemComponent* EffectComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UParticleSystemComponent* HitEffectComp;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Damage")
 	float Damage = -20.f;
 

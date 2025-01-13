@@ -21,6 +21,10 @@ AASMagicProjectile::AASMagicProjectile()
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(SphereComp);
 
+	HitEffectComp = CreateDefaultSubobject<UParticleSystemComponent>("HitEffectComp");
+	HitEffectComp->SetupAttachment(SphereComp);
+	HitEffectComp->SetActive(false);
+
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->InitialSpeed = 2000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
@@ -29,7 +33,7 @@ AASMagicProjectile::AASMagicProjectile()
 
 void AASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor)
+	if (OtherActor && OtherActor != GetInstigator())
 	{
 		UARAttributeComponent* AttributesComp = Cast<UARAttributeComponent>(OtherActor->GetComponentByClass(UARAttributeComponent::StaticClass()));
 		if (AttributesComp)
