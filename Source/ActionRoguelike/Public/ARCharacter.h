@@ -84,6 +84,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta);
+
 	void MoveForward(const FInputActionValue& Value);
 
 	void MoveRight(const FInputActionValue& Value);
@@ -106,13 +109,14 @@ protected:
 
 	void PrimaryInteract(const FInputActionValue& Value);
 
-
-
 	FRotator GetCrossHairRotation(FVector FromLocation);
 
 	//void AddControllerYawInput(float Value);
 
+	virtual void PostInitializeComponents() override;
+
 public:	
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

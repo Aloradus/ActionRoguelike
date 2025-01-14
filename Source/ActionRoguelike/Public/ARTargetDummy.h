@@ -32,6 +32,8 @@ void OnHealthChanged(AActor* InstigatorActor, UARAttributeComponent* OwningComp,
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

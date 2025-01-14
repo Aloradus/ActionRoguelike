@@ -2,6 +2,7 @@
 
 
 #include "ARAttributeComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values for this component's properties
 UARAttributeComponent::UARAttributeComponent()
@@ -26,11 +27,15 @@ void UARAttributeComponent::BeginPlay()
 
 void UARAttributeComponent::ApplyHealthChange(float Delta)
 {
-	Health += Delta;
-
+	Health = FMath::Clamp(Health += Delta, 0.f, MaxHealth);
 	//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
 	OnHealthChanged.Broadcast(nullptr, this, Health, MaxHealth, Delta);
 
+}
+
+bool UARAttributeComponent::IsAlive() const
+{
+	return Health > 0.f;
 }
 
 // Called every frame

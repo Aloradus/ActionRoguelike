@@ -15,8 +15,13 @@ AARTargetDummy::AARTargetDummy()
 	RootComponent = MeshComp;
 
 	AttributeComp = CreateDefaultSubobject<UARAttributeComponent>("AttributeComp");
-	AttributeComp->OnHealthChanged.AddDynamic(this, &AARTargetDummy::OnHealthChanged);
+}
 
+
+void AARTargetDummy::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributeComp->OnHealthChanged.AddDynamic(this, &AARTargetDummy::OnHealthChanged);
 }
 
 void AARTargetDummy::OnHealthChanged(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
@@ -35,6 +40,7 @@ void AARTargetDummy::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
 
 // Called every frame
 void AARTargetDummy::Tick(float DeltaTime)

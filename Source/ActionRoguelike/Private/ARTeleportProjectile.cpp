@@ -41,6 +41,7 @@ void AARTeleportProjectile::BeginPlay()
 void AARTeleportProjectile::TeleportPhaseOne()
 {
 	MovementComp->StopMovementImmediately();
+	SetActorEnableCollision(false);
 	InitialEffectComp->Activate(false);
 	SecondaryEffectComp->Activate(true);
 	GetWorldTimerManager().SetTimer(TimerHandle_TeleportTimer, this, &AARTeleportProjectile::TeleportPhaseTwo, .2f);
@@ -49,7 +50,6 @@ void AARTeleportProjectile::TeleportPhaseOne()
 void AARTeleportProjectile::TeleportPhaseTwo()
 {
 	AActor* MyInstigator = GetOwner();
-
 
 	if (MyInstigator)
 	{

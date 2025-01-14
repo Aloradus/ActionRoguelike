@@ -34,6 +34,35 @@ AARCharacter::AARCharacter()
 	bUseControllerRotationYaw = false;
 }
 
+void AARCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AttributesComp->OnHealthChanged.AddDynamic(this, &AARCharacter::OnHealthChange);
+}
+
+// Called to bind functionality to input
+void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		//Bind movements
+		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
+		EnhancedInputComponent->BindAction(IAMoveRight, ETriggerEvent::Triggered, this, &AARCharacter::MoveRight);
+		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
+		EnhancedInputComponent->BindAction(IAPrimaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(IAJump, ETriggerEvent::Triggered, this, &AARCharacter::MoveJump);
+		EnhancedInputComponent->BindAction(IAInteract, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryInteract);
+		EnhancedInputComponent->BindAction(IATeleportMove, ETriggerEvent::Triggered, this, &AARCharacter::TeleportMove);
+		EnhancedInputComponent->BindAction(IASecondaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::SecondaryAttack);
+	}
+
+	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
+
+	//PlayerInputComponent->BindAxis("Turn", this, &AARCharacter::AddControllerYawInput);
+}
+
 // Called when the game starts or when spawned
 void AARCharacter::BeginPlay()
 {
@@ -45,6 +74,15 @@ void AARCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(ARCharacterMappingContext, 0);
 		}
+	}
+}
+
+void AARCharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
+{
+	if (NewHealth <= 0.f && Delta < 0.0f)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
 	}
 }
 
@@ -167,7 +205,7 @@ FRotator AARCharacter::GetCrossHairRotation(FVector FromLocation)
 {
 	//Calculate aim location
 	FVector CameraLocation = CameraComp->GetComponentLocation();
-	FVector AimLocation = CameraLocation + (CameraComp->GetComponentRotation().Vector() * 2500.0f);
+	FVector AimLocation = CameraLocation + (CameraComp->GetComponentRotation().Vector() * 5000.0f);
 
 	FHitResult Hit;
 	FCollisionObjectQueryParams ObjectQueryParams;
@@ -186,6 +224,7 @@ FRotator AARCharacter::GetCrossHairRotation(FVector FromLocation)
 
 	return ReturnRotation;
 }
+
 
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)
@@ -208,26 +247,5 @@ void AARCharacter::Tick(float DeltaTime)
 }
 
 
-// Called to bind functionality to input
-void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		//Bind movements
-		EnhancedInputComponent->BindAction(IAMoveForward, ETriggerEvent::Triggered, this, &AARCharacter::MoveForward);
-		EnhancedInputComponent->BindAction(IAMoveRight, ETriggerEvent::Triggered, this, &AARCharacter::MoveRight);
-		EnhancedInputComponent->BindAction(IAYawnAndPitchInput, ETriggerEvent::Triggered, this, &AARCharacter::MoveLook);
-		EnhancedInputComponent->BindAction(IAPrimaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryAttack);
-		EnhancedInputComponent->BindAction(IAJump, ETriggerEvent::Triggered, this, &AARCharacter::MoveJump);
-		EnhancedInputComponent->BindAction(IAInteract, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryInteract);
-		EnhancedInputComponent->BindAction(IATeleportMove, ETriggerEvent::Triggered, this, &AARCharacter::TeleportMove);
-		EnhancedInputComponent->BindAction(IASecondaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::SecondaryAttack);
-	}
-
-	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
-
-	//PlayerInputComponent->BindAxis("Turn", this, &AARCharacter::AddControllerYawInput);
-}
 
