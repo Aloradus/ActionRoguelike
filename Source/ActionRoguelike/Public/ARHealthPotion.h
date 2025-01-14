@@ -8,6 +8,7 @@
 #include "ARHealthPotion.generated.h"
 
 class UStaticMeshComponent;
+class UPrimitiveComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARHealthPotion : public AActor, public IARInteractiveInterface

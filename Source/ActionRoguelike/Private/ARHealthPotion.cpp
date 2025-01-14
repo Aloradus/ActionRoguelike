@@ -2,6 +2,8 @@
 
 
 #include "ARHealthPotion.h"
+#include "ARAttributeComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values
 AARHealthPotion::AARHealthPotion()
@@ -11,7 +13,6 @@ AARHealthPotion::AARHealthPotion()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	RootComponent = StaticMesh;
-
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +41,16 @@ void AARHealthPotion::SetPotionState(bool bIsActive)
 
 void AARHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
+	if (InstigatorPawn)
+	{
+		UARAttributeComponent* AttributesComp = InstigatorPawn->FindComponentByClass<UARAttributeComponent>();
+
+		if (AttributesComp)
+		{
+			AttributesComp->ApplyHealthChange(HealAmount);
+			HideAndCoolDown();
+		}
+	}
 	throw std::logic_error("The method or operation is not implemented.");
 }
 

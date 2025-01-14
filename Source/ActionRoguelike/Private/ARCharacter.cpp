@@ -79,6 +79,9 @@ void AARCharacter::BeginPlay()
 
 void AARCharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
 {
+	//Flash the players material from a hit
+	GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->TimeSeconds);
+
 	if (NewHealth <= 0.f && Delta < 0.0f)
 	{
 		APlayerController* PC = Cast<APlayerController>(GetController());
