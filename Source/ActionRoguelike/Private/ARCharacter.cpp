@@ -34,6 +34,11 @@ AARCharacter::AARCharacter()
 	bUseControllerRotationYaw = false;
 }
 
+UCameraComponent* AARCharacter::GetActiveCamera()
+{
+	return CameraComp;
+}
+
 void AARCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

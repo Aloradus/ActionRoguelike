@@ -24,6 +24,9 @@ public:
 	// Sets default values for this character's properties
 	AARCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	UCameraComponent* GetActiveCamera();
+
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
