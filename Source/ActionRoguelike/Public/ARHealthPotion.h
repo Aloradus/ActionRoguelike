@@ -8,7 +8,7 @@
 #include "ARHealthPotion.generated.h"
 
 class UStaticMeshComponent;
-class UPrimitiveComponent;
+class UBoxComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARHealthPotion : public AActor, public IARInteractiveInterface
@@ -23,6 +23,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* StaticMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* BoxComp;
 
 	UPROPERTY(EditDefaultsOnly)
 	float HealAmount;
@@ -44,6 +47,8 @@ public:
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 
 	private:
+
+	void ShowPowerup();
 
 	void HideAndCoolDown();
 

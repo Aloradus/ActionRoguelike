@@ -3,7 +3,8 @@
 
 #include "ARHealthPotion.h"
 #include "ARAttributeComponent.h"
-#include "Components/PrimitiveComponent.h"
+#include "Components/BoxComponent.h"
+#include "GameFramework/Actor.h"
 
 // Sets default values
 AARHealthPotion::AARHealthPotion()
@@ -13,6 +14,13 @@ AARHealthPotion::AARHealthPotion()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	RootComponent = StaticMesh;
+
+	BoxComp = CreateDefaultSubobject <UBoxComponent>("BoxComp");
+	BoxComp->SetupAttachment(RootComponent);
+
+	HealAmount = 50.f;
+	ResetTimeInSeconds = 10.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -29,14 +37,22 @@ void AARHealthPotion::Tick(float DeltaTime)
 
 }
 
+void AARHealthPotion::ShowPowerup()
+{
+	SetPotionState(true);
+}
+
 void AARHealthPotion::HideAndCoolDown()
 {
+	SetPotionState(false);
 
+	GetWorldTimerManager().SetTimer(TimerHandle_RefreshTimer,this, &AARHealthPotion::ShowPowerup, ResetTimeInSeconds);
 }
 
 void AARHealthPotion::SetPotionState(bool bIsActive)
 {
-
+	SetActorEnableCollision(bIsActive);
+	RootComponent->SetVisibility(bIsActive, true);
 }
 
 void AARHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
@@ -51,6 +67,5 @@ void AARHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 			HideAndCoolDown();
 		}
 	}
-	throw std::logic_error("The method or operation is not implemented.");
 }
 
