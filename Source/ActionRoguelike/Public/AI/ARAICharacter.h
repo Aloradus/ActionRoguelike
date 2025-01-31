@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ARAICharacter.generated.h"
 
+class UPawnSensingComponent;
+
 UCLASS()
 class ACTIONROGUELIKE_API AARAICharacter : public ACharacter
 {
@@ -16,6 +18,16 @@ public:
 	AARAICharacter();
 
 protected:
+
+	//Pawn sensing is deprecated. AI Perception should be used instead.
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPawnSensingComponent* PawnSensingComp;
+
+	UFUNCTION()
+	void OnPawnSeen(APawn* PawnSeen);
+
+	void PostInitializeComponents() override;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

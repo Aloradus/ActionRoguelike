@@ -47,8 +47,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
 	USoundCue* ImpactSoundCue;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Damage")
-	float Damage = -20.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	float Damage = -5.f;
 
 	UFUNCTION()
 	virtual void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
