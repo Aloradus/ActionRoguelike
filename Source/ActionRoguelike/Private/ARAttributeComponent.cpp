@@ -38,6 +38,11 @@ bool UARAttributeComponent::IsAlive() const
 	return Health > 0.f;
 }
 
+void UARAttributeComponent::Initalize(bool AIControlled)
+{
+	bAIControlled = AIControlled;
+}
+
 // Called every frame
 void UARAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

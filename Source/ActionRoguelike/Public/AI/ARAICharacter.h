@@ -7,6 +7,7 @@
 #include "ARAICharacter.generated.h"
 
 class UPawnSensingComponent;
+class UARAttributeComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARAICharacter : public ACharacter
@@ -19,12 +20,18 @@ public:
 
 protected:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
+	UARAttributeComponent* AttributesComp;
+
 	//Pawn sensing is deprecated. AI Perception should be used instead.
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* PawnSeen);
+
+	UFUNCTION()
+	void OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta);
 
 	void PostInitializeComponents() override;
 

@@ -14,6 +14,10 @@ class ACTIONROGUELIKE_API UARAttributeComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+
+	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	bool bAIControlled;
+
 	// Sets default values for this component's properties
 	UARAttributeComponent();
 
@@ -24,6 +28,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Attributes")
+	bool bHealthLow;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -38,6 +45,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
+
+	UFUNCTION(BlueprintCallable)
+	void Initalize(bool AIControlled);
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

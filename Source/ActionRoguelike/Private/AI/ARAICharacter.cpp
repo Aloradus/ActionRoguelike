@@ -6,6 +6,7 @@
 #include "AI/ARAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
+#include "ARAttributeComponent.h"
 
 // Sets default values
 AARAICharacter::AARAICharacter()
@@ -15,6 +16,8 @@ AARAICharacter::AARAICharacter()
 
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 
+	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
+	AttributesComp->Initalize(true);
 }
 
 //Pawn sensing is deprecated. AI Perception should be used instead.
@@ -33,11 +36,17 @@ void AARAICharacter::OnPawnSeen(APawn* PawnSeen)
 
 }
 
+void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
+{
+	
+}
+
 void AARAICharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AARAICharacter::OnPawnSeen);
+	AttributesComp->OnHealthChanged.AddDynamic(this, &AARAICharacter::OnHealthChange);
 }
 
 // Called when the game starts or when spawned

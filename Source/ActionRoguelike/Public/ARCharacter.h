@@ -29,6 +29,9 @@ public:
 
 protected:
 
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	FName HandSocketName = "Muzzle_01";
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
 	

@@ -29,6 +29,7 @@ AARCharacter::AARCharacter()
 	InteractionComp = CreateDefaultSubobject<UARInteractionComponent>("InteractionComp");
 
 	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
+	AttributesComp->Initalize(false);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -144,7 +145,7 @@ void AARCharacter::TeleportMove(const FInputActionValue& Value)
 void AARCharacter::TeleportMove_TimeElapsed()
 {
 	//Calc spawn rotation & location
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
 	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
 
@@ -171,7 +172,7 @@ void AARCharacter::PrimaryInteract(const FInputActionValue& Value)
 void AARCharacter::PrimaryAttack_TimeElapsed()
 {
 	//Calc spawn rotation & location
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
 	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
 
@@ -195,7 +196,7 @@ void AARCharacter::SecondaryAttack(const FInputActionValue& Value)
 void AARCharacter::SecondaryAttack_TimeElapsed()
 {
 	//Calc spawn rotation & location
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
 	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
 
