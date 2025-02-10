@@ -29,6 +29,11 @@ public:
 
 	// Sets default values for this component's properties
 	UARAttributeComponent();
+	
+private:
+
+	UPROPERTY(VisibleAnywhere)
+	APawn* OwningPawn;
 
 protected:
 
@@ -50,7 +55,7 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyHealthChange(AActor* InstigatingActor, float Delta);
+	bool ApplyHealthChange(AActor* InstigatingActor, float Delta);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
@@ -64,8 +69,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	private:
+	UFUNCTION(BlueprintCallable)
+	bool Kill(AActor* InstigatorActor);
 
-	UPROPERTY(VisibleAnywhere)
-	APawn* OwningPawn;
 };

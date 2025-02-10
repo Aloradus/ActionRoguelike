@@ -50,14 +50,26 @@ void UARAttributeComponent::BeginPlay()
 }
 
 
-void UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float Delta)
+bool UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float Delta)
 {
+
+	if (!GetOwner()->CanBeDamaged())
+	{
+		return false;
+	}
+
 	float OldHealth = Health;
 	Health = FMath::Clamp(Health += Delta, 0.f, MaxHealth);
 	float ActualDelta = OldHealth - Health;
 
-	//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
-	OnHealthChanged.Broadcast(InstigatingActor, this, Health, MaxHealth, ActualDelta);
+	if (ActualDelta != 0)
+	{
+		//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
+		OnHealthChanged.Broadcast(InstigatingActor, this, Health, MaxHealth, ActualDelta);
+
+		return true;
+	}
+	return false;
 }
 
 bool UARAttributeComponent::IsAlive() const
@@ -82,5 +94,10 @@ void UARAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+bool UARAttributeComponent::Kill(AActor* InstigatorActor)
+{
+	return ApplyHealthChange(InstigatorActor, -MaxHealth);
 }
 

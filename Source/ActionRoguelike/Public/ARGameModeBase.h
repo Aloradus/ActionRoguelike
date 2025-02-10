@@ -47,4 +47,7 @@ class ACTIONROGUELIKE_API AARGameModeBase : public AGameModeBase
 
 	virtual void StartPlay() override;
 
+	UFUNCTION(Exec)
+	void KillAll();
+
 };

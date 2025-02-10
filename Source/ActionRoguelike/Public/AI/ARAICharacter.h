@@ -9,6 +9,7 @@
 class UPawnSensingComponent;
 class UARAttributeComponent;
 class AARAIController;
+class UARWorldUserWidget;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARAICharacter : public ACharacter
@@ -20,6 +21,15 @@ public:
 	AARAICharacter();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, category = "UI")
+	TSubclassOf<UARWorldUserWidget> HealthBarWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, category = "UI")
+	FVector HealthBarWorldOffset;
+
+	UPROPERTY(BlueprintReadWrite, category = "UI")
+	UARWorldUserWidget* ActiveHealthBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attributes")
 	UARAttributeComponent* AttributesComp;

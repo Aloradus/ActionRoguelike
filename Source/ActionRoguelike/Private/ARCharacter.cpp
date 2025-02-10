@@ -69,6 +69,11 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	//PlayerInputComponent->BindAxis("Turn", this, &AARCharacter::AddControllerYawInput);
 }
 
+void AARCharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributesComp->ApplyHealthChange(this, Amount);
+}
+
 // Called when the game starts or when spawned
 void AARCharacter::BeginPlay()
 {

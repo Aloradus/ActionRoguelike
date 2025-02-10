@@ -83,3 +83,18 @@ void AARGameModeBase::StartPlay()
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &AARGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
+
+void AARGameModeBase::KillAll()
+{
+	for (TActorIterator<AARAICharacter> It(GetWorld()); It; ++It)
+	{
+		AARAICharacter* Bot = *It;
+
+		UARAttributeComponent* AttributesComp = UARAttributeComponent::GetAttributesComp(Bot);
+
+		if (AttributesComp && AttributesComp->IsAlive())
+		{
+			AttributesComp->Kill(this); // @fixme: pass in player for kill credit
+		}
+	}
+}

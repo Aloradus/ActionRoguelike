@@ -12,6 +12,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "BrainComponent.h"
+#include "ARWorldUserWidget.h"
 
 // Sets default values
 AARAICharacter::AARAICharacter()
@@ -53,7 +54,21 @@ void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeCompone
 		SetTargetActor(InstigatorActor);
 	}
 
-	//Flash the players material from a hit
+
+	//If damages, show health bar
+	if (ActiveHealthBar == nullptr)
+	{
+		ActiveHealthBar = CreateWidget<UARWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
+
+		if (ActiveHealthBar)
+		{
+			ActiveHealthBar->InitializeWidget(HealthBarWorldOffset, this);
+			ActiveHealthBar->AddToViewport();
+		}
+	}	
+
+
+	//Flash the character's material from a hit
 	GetMesh()->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
 
 	if (AttributesComp->IsHealthLow())
@@ -87,27 +102,6 @@ void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeCompone
 
 		//Set lifespan
 		SetLifeSpan(10.0f);
-
-		
-		//Destroy();
-
-		//Does not work- taken from interwebs
-		//if (GetMesh())
-		//{
-		//	GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
-
-		//	// Enable physics simulation for all bones
-		//	GetMesh()->SetSimulatePhysics(true);
-		//	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-		//	// Disable character movement
-		//	GetCharacterMovement()->DisableMovement();
-
-		//	// Optionally: Detach the capsule component to prevent it from interfering
-		//	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-		//}
-
 
 	}
 }

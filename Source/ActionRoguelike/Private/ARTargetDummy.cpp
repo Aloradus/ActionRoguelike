@@ -24,6 +24,7 @@ void AARTargetDummy::PostInitializeComponents()
 	AttributeComp->OnHealthChanged.AddDynamic(this, &AARTargetDummy::OnHealthChanged);
 }
 
+//InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
 void AARTargetDummy::OnHealthChanged(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ARTarget Hit"));
