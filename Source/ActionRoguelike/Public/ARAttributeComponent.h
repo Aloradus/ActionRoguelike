@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "ARAttributeComponent.generated.h"
 
+class APawn;
+class AActor;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FOnHealthChanged, AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -18,6 +21,12 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Attributes")
 	bool bAIControlled;
 
+	UFUNCTION(BlueprintCallable)
+	static UARAttributeComponent* GetAttributesComp(AActor* FromActor);
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes", meta = (DisplayName = "IsAlive"))
+	static bool IsActorAlive(AActor* Actor);
+
 	// Sets default values for this component's properties
 	UARAttributeComponent();
 
@@ -28,9 +37,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
 	float Health = 100.0f;
-
-	UPROPERTY(VisibleAnywhere, Category = "Attributes")
-	bool bHealthLow;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Attributes")
+	float FlagLowHealthAt = 40.0f;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -41,16 +50,22 @@ public:
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyHealthChange(float Delta);
+	void ApplyHealthChange(AActor* InstigatingActor, float Delta);
 
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const;
 
 	UFUNCTION(BlueprintCallable)
-	void Initalize(bool AIControlled);
+	bool IsHealthLow() const;
+
+	UFUNCTION(BlueprintCallable)
+	void Initalize(bool AIControlled, APawn* ControllingPawn);
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	private:
+
+	UPROPERTY(VisibleAnywhere)
+	APawn* OwningPawn;
 };

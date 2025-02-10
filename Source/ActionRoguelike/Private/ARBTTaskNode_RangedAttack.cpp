@@ -5,6 +5,13 @@
 #include "AI/ARAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AI/ARAIController.h"
+#include "ARAttributeComponent.h"
+
+UARBTTaskNode_RangedAttack::UARBTTaskNode_RangedAttack()
+{
+	MaxBulletPitchSpread = 4.0f;
+	MaxBulletYawSpread = 4.0f;
+}
 
 EBTNodeResult::Type UARBTTaskNode_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -22,12 +29,16 @@ EBTNodeResult::Type UARBTTaskNode_RangedAttack::ExecuteTask(UBehaviorTreeCompone
 			TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject(TargetActorKey.SelectedKeyName));
 		}
 
-		if (ensure(MyCharacter && TargetActor))
+		if (ensure(MyCharacter && TargetActor) && UARAttributeComponent::IsActorAlive(TargetActor))
 		{
 			FVector MuzzleLoc = MyCharacter->GetMesh()->GetSocketLocation("Muzzle_01");
 
 			FVector Direction = TargetActor->GetActorLocation() - MuzzleLoc;
 			FRotator MuzzleRotation = Direction.Rotation();
+
+			//Add random weapon spread
+			MuzzleRotation.Pitch += FMath::RandRange(0.f, MaxBulletPitchSpread);
+			MuzzleRotation.Yaw += FMath::RandRange(-MaxBulletYawSpread, MaxBulletPitchSpread);
 
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -36,13 +47,10 @@ EBTNodeResult::Type UARBTTaskNode_RangedAttack::ExecuteTask(UBehaviorTreeCompone
 
 			AActor* ProjectileFired = GetWorld()->SpawnActor<AActor>(ProjectileBP, MuzzleLoc, MuzzleRotation, SpawnParams);
 
-			UE_LOG(LogTemp, Warning, TEXT("FIRE!"));
 			return ProjectileFired ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
 		}
 
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("FAILED!"));
 
 	return EBTNodeResult::Failed;
 }

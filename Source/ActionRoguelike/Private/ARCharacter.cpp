@@ -29,7 +29,7 @@ AARCharacter::AARCharacter()
 	InteractionComp = CreateDefaultSubobject<UARInteractionComponent>("InteractionComp");
 
 	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
-	AttributesComp->Initalize(false);
+	AttributesComp->Initalize(false, Cast<APawn>(this));
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;

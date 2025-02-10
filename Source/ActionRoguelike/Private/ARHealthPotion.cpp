@@ -63,7 +63,7 @@ void AARHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 
 		if (AttributesComp)
 		{
-			AttributesComp->ApplyHealthChange(HealAmount);
+			AttributesComp->ApplyHealthChange(this, HealAmount);
 			HideAndCoolDown();
 		}
 	}

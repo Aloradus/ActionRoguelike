@@ -8,6 +8,7 @@
 
 class UPawnSensingComponent;
 class UARAttributeComponent;
+class AARAIController;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARAICharacter : public ACharacter
@@ -27,10 +28,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
+	void SetTargetActor(AActor* NewTarget);
+
+	UFUNCTION(BlueprintCallable)
 	void OnPawnSeen(APawn* PawnSeen);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta);
 
 	void PostInitializeComponents() override;
@@ -44,5 +48,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+
+	AARAIController* AIController;
 
 };

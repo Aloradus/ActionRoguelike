@@ -55,7 +55,7 @@ void AARProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		UARAttributeComponent* AttributesComp = Cast<UARAttributeComponent>(OtherActor->GetComponentByClass(UARAttributeComponent::StaticClass()));
 		if (AttributesComp)
 		{
-			AttributesComp->ApplyHealthChange(Damage);
+			AttributesComp->ApplyHealthChange(GetInstigator(), Damage);
 			Destroy();
 		}
 	}

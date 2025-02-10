@@ -7,6 +7,11 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
 #include "ARAttributeComponent.h"
+#include "Animation/AnimInstance.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "BrainComponent.h"
 
 // Sets default values
 AARAICharacter::AARAICharacter()
@@ -17,28 +22,94 @@ AARAICharacter::AARAICharacter()
 	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
 
 	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
-	AttributesComp->Initalize(true);
+	AttributesComp->Initalize(true, Cast<APawn>(this));
+
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
+
+void AARAICharacter::SetTargetActor(AActor* NewTarget)
+{
+	if (ensure(AIController))
+	{
+		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+		BBComp->SetValueAsObject("TargetActor", NewTarget);
+	}
 }
 
 //Pawn sensing is deprecated. AI Perception should be used instead.
 void AARAICharacter::OnPawnSeen(APawn* PawnSeen)
 {
-	AARAIController* AIC = Cast<AARAIController>(GetController());
+	SetTargetActor(PawnSeen);
 
-	if (ensure(AIC))
-	{
-		UBlackboardComponent* BBComp = AIC->GetBlackboardComponent();
-		BBComp->SetValueAsObject("TargetActor", PawnSeen);
-
-		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
-
-	}
-
+	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 }
 
 void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
 {
-	
+
+	if (InstigatorActor != this)
+	{
+		DrawDebugString(GetWorld(), GetActorLocation(), "NEW TARGET AQUIRED FROM DAMAGE", nullptr, FColor::Red, 4.0f, true);
+		SetTargetActor(InstigatorActor);
+	}
+
+	//Flash the players material from a hit
+	GetMesh()->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
+
+	if (AttributesComp->IsHealthLow())
+	{
+		if (ensure(AIController))
+		{
+			UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+			BBComp->SetValueAsBool("bLowHealth", true);
+		}
+	}
+	else
+	{
+		if (ensure(AIController))
+		{
+			UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+			BBComp->SetValueAsBool("bLowHealth", false);
+		}
+	}
+
+	if (NewHealth <= 0.f)
+	{
+		//Stop Behavior Tree
+		if (AIController)
+		{
+			AIController->GetBrainComponent()->StopLogic("Killed");
+		}
+
+		//Ragdoll
+		GetMesh()->SetAllBodiesSimulatePhysics(true);
+		GetMesh()->SetCollisionProfileName("Ragdoll");
+
+		//Set lifespan
+		SetLifeSpan(10.0f);
+
+		
+		//Destroy();
+
+		//Does not work- taken from interwebs
+		//if (GetMesh())
+		//{
+		//	GetMesh()->SetCollisionProfileName(FName("Ragdoll"));
+
+		//	// Enable physics simulation for all bones
+		//	GetMesh()->SetSimulatePhysics(true);
+		//	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		//	// Disable character movement
+		//	GetCharacterMovement()->DisableMovement();
+
+		//	// Optionally: Detach the capsule component to prevent it from interfering
+		//	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		//}
+
+
+	}
 }
 
 void AARAICharacter::PostInitializeComponents()
@@ -47,6 +118,7 @@ void AARAICharacter::PostInitializeComponents()
 
 	PawnSensingComp->OnSeePawn.AddDynamic(this, &AARAICharacter::OnPawnSeen);
 	AttributesComp->OnHealthChanged.AddDynamic(this, &AARAICharacter::OnHealthChange);
+	AIController = Cast<AARAIController>(GetController());
 }
 
 // Called when the game starts or when spawned

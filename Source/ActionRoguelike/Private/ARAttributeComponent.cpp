@@ -3,6 +3,10 @@
 
 #include "ARAttributeComponent.h"
 #include "Math/UnrealMathUtility.h"
+#include "GameFramework/Pawn.h"
+
+
+
 
 // Sets default values for this component's properties
 UARAttributeComponent::UARAttributeComponent()
@@ -14,6 +18,27 @@ UARAttributeComponent::UARAttributeComponent()
 	// ...
 }
 
+UARAttributeComponent* UARAttributeComponent::GetAttributesComp(AActor* FromActor)
+{
+	if (FromActor)
+	{
+		return FromActor->FindComponentByClass<UARAttributeComponent>();
+	}
+
+	return nullptr;
+}
+
+bool UARAttributeComponent::IsActorAlive(AActor* Actor)
+{
+	UARAttributeComponent* AttributesComp = GetAttributesComp(Actor);
+	if (AttributesComp)
+	{
+		return AttributesComp->IsAlive();
+	}
+
+	//Default behavior - no component, so must be dead
+	return false;
+}
 
 // Called when the game starts
 void UARAttributeComponent::BeginPlay()
@@ -25,12 +50,14 @@ void UARAttributeComponent::BeginPlay()
 }
 
 
-void UARAttributeComponent::ApplyHealthChange(float Delta)
+void UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float Delta)
 {
+	float OldHealth = Health;
 	Health = FMath::Clamp(Health += Delta, 0.f, MaxHealth);
-	//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
-	OnHealthChanged.Broadcast(nullptr, this, Health, MaxHealth, Delta);
+	float ActualDelta = OldHealth - Health;
 
+	//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
+	OnHealthChanged.Broadcast(InstigatingActor, this, Health, MaxHealth, ActualDelta);
 }
 
 bool UARAttributeComponent::IsAlive() const
@@ -38,9 +65,15 @@ bool UARAttributeComponent::IsAlive() const
 	return Health > 0.f;
 }
 
-void UARAttributeComponent::Initalize(bool AIControlled)
+bool UARAttributeComponent::IsHealthLow() const
+{
+	return Health <= FlagLowHealthAt;
+}
+
+void UARAttributeComponent::Initalize(bool AIControlled, APawn* ControllingPawn)
 {
 	bAIControlled = AIControlled;
+	OwningPawn = ControllingPawn;
 }
 
 // Called every frame
