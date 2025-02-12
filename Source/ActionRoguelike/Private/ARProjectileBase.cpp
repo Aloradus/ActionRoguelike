@@ -11,6 +11,7 @@
 #include "ARAttributeComponent.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
+#include "ARGameplayFunctionLibrary.h"
 
 // Sets default values
 AARProjectileBase::AARProjectileBase()
@@ -50,13 +51,19 @@ void AARProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Ot
 
 void AARProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		UARAttributeComponent* AttributesComp = Cast<UARAttributeComponent>(OtherActor->GetComponentByClass(UARAttributeComponent::StaticClass()));
-		if (AttributesComp)
+		//UARAttributeComponent* AttributesComp = Cast<UARAttributeComponent>(OtherActor->GetComponentByClass(UARAttributeComponent::StaticClass()));
+		//if (AttributesComp)
+		//{
+		//	AttributesComp->ApplyHealthChange(GetInstigator(), Damage);
+		//	Destroy();
+		//}
+
+		if (UARGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 		{
-			AttributesComp->ApplyHealthChange(GetInstigator(), Damage);
-			Destroy();
+			Explode();
 		}
 	}
 }

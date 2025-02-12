@@ -10,6 +10,8 @@
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
+class AActor;
+
 
 /**
  * 
@@ -41,11 +43,16 @@ class ACTIONROGUELIKE_API AARGameModeBase : public AGameModeBase
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
 
+	UFUNCTION()
+	void RespawnPlayerElapsed(AController* Controller);
+
 	public:
 
 	AARGameModeBase();
 
 	virtual void StartPlay() override;
+
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
 	UFUNCTION(Exec)
 	void KillAll();

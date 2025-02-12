@@ -4,9 +4,10 @@
 #include "ARAttributeComponent.h"
 #include "Math/UnrealMathUtility.h"
 #include "GameFramework/Pawn.h"
+#include "ARGameModeBase.h"
 
-
-
+//debugging console variable
+static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("ar.DamageMultiplier"), 1.0f, TEXT("Globage Damage Modifier for Attribute Component."), ECVF_Cheat);
 
 // Sets default values for this component's properties
 UARAttributeComponent::UARAttributeComponent()
@@ -58,6 +59,11 @@ bool UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float De
 		return false;
 	}
 
+	//Apply or console debugging CVarDamageMultiplier
+	Delta *= CVarDamageMultiplier.GetValueOnGameThread();
+
+	
+
 	float OldHealth = Health;
 	Health = FMath::Clamp(Health += Delta, 0.f, MaxHealth);
 	float ActualDelta = OldHealth - Health;
@@ -67,6 +73,15 @@ bool UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float De
 		//AActor*, InstigatorActor, UARAttributeComponent*, OwningComp, float, NewHealth, float, MaxHealth, float, Delta
 		OnHealthChanged.Broadcast(InstigatingActor, this, Health, MaxHealth, ActualDelta);
 
+		//Actor has died
+		if (Health <= 0.0f)
+		{
+			AARGameModeBase* GM = GetWorld()->GetAuthGameMode<AARGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigatingActor);
+			}
+		}
 		return true;
 	}
 	return false;

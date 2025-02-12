@@ -9,6 +9,10 @@
 #include "AI/ARAICharacter.h"
 #include "EngineUtils.h"
 #include "Curves/CurveFloat.h"
+#include "ARCharacter.h"
+
+//debugging console variable
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 void AARGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
@@ -32,6 +36,13 @@ void AARGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryI
 
 void AARGameModeBase::SpawnBotTimerElapsed()
 {
+	//if this is set to false int he console for debugging return
+	if (!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Bot spawning disabled via cvar CVarSpawnBots"));
+		return;
+	}
+
 	//Check if were at capacity before running spawn logic
 
 	int32 NumOfAliveBots = 0;
@@ -72,6 +83,17 @@ void AARGameModeBase::SpawnBotTimerElapsed()
 	}
 }
 
+void AARGameModeBase::RespawnPlayerElapsed(AController* Controller)
+{
+	if (ensure(Controller))
+	{
+		//Detatch dead pawn, so we spawn a new one
+		Controller->UnPossess();
+
+		RestartPlayer(Controller);
+	}
+}
+
 AARGameModeBase::AARGameModeBase()
 {
 	SpawnTimerInterval = 2.0f;
@@ -82,6 +104,27 @@ void AARGameModeBase::StartPlay()
 	Super::StartPlay();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &AARGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
+}
+
+void AARGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
+{
+	AARCharacter* Player =Cast<AARCharacter>(VictimActor);
+
+		//Only proceed if type cast is Player
+		if (Player)
+		{
+			//handle is not saved but prvents it from overriting itself if another player dies at the same time
+
+			FTimerHandle TimerHandle_RespawnDelay;
+			FTimerDelegate Delegate;
+
+			float RespawnDelay = 2.0f;
+			Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
+			GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
+		}
+
+		UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+
 }
 
 void AARGameModeBase::KillAll()

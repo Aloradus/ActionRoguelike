@@ -26,7 +26,11 @@ AARAICharacter::AARAICharacter()
 	AttributesComp->Initalize(true, Cast<APawn>(this));
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetGenerateOverlapEvents(true);
 }
+	
 
 void AARAICharacter::SetTargetActor(AActor* NewTarget)
 {
@@ -99,6 +103,9 @@ void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeCompone
 		//Ragdoll
 		GetMesh()->SetAllBodiesSimulatePhysics(true);
 		GetMesh()->SetCollisionProfileName("Ragdoll");
+
+		GetCharacterMovement()->DisableMovement();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 		//Set lifespan
 		SetLifeSpan(10.0f);
