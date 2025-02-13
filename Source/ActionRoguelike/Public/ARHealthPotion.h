@@ -19,6 +19,11 @@ public:
 	// Sets default values for this actor's properties
 	AARHealthPotion();
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void Interact_Implementation(APawn* InstigatorPawn) override;
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -26,6 +31,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* BoxComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	float CreditCost;
 
 	UPROPERTY(EditDefaultsOnly)
 	float HealAmount;
@@ -38,15 +46,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-public:
-
-	void Interact_Implementation(APawn* InstigatorPawn) override;
-
-	private:
+private:
 
 	void ShowPowerup();
 

@@ -5,6 +5,7 @@
 #include "ARAttributeComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
+#include "ARPlayerState.h"
 
 // Sets default values
 AARHealthPotion::AARHealthPotion()
@@ -20,6 +21,7 @@ AARHealthPotion::AARHealthPotion()
 
 	HealAmount = 50.f;
 	ResetTimeInSeconds = 10.0f;
+	CreditCost = 25.0f;
 
 }
 
@@ -59,6 +61,20 @@ void AARHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 {
 	if (InstigatorPawn)
 	{
+		//If character cannot afford eject.
+		AController* CharacterController = InstigatorPawn->GetController();
+		if (CharacterController)
+		{
+			AARPlayerState* PlayerState = CharacterController->GetPlayerState<AARPlayerState>();
+
+			if (PlayerState->GetCredits() < CreditCost)
+			{
+				return;
+			}
+			PlayerState->RemoveCredits(CreditCost);
+		}
+
+		//find and adjust health
 		UARAttributeComponent* AttributesComp = InstigatorPawn->FindComponentByClass<UARAttributeComponent>();
 
 		if (AttributesComp)

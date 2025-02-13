@@ -18,6 +18,10 @@ class ACTIONROGUELIKE_API UARAttributeComponent : public UActorComponent
 
 public:	
 
+
+	UPROPERTY(EditDefaultsOnly, category = "Attributes")
+	float KillCreditValue;
+
 	UPROPERTY(VisibleAnywhere, Category = "Attributes")
 	bool bAIControlled;
 

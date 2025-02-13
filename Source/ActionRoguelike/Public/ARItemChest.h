@@ -17,6 +17,9 @@ class ACTIONROGUELIKE_API AARItemChest : public AActor, public IARInteractiveInt
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bLidOpen;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TargetPitch;
 
 	UPROPERTY(VisibleAnywhere)
@@ -36,5 +39,8 @@ public:
 	AARItemChest();
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
+
+private:
+
 
 };

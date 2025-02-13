@@ -16,6 +16,7 @@ UARAttributeComponent::UARAttributeComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
+	KillCreditValue = 10.f;
 	// ...
 }
 

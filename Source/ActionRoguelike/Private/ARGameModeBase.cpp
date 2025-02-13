@@ -10,6 +10,7 @@
 #include "EngineUtils.h"
 #include "Curves/CurveFloat.h"
 #include "ARCharacter.h"
+#include "ARPlayerState.h"
 
 //debugging console variable
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("ar.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
@@ -96,6 +97,7 @@ void AARGameModeBase::RespawnPlayerElapsed(AController* Controller)
 
 AARGameModeBase::AARGameModeBase()
 {
+	PlayerStateClass = AARPlayerState::StaticClass();
 	SpawnTimerInterval = 2.0f;
 }
 
@@ -122,6 +124,26 @@ void AARGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 			Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
 			GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 		}
+		
+		//TODO the below is ineffecient. YOu can pull the playerstate from APawn->GetPlayerState
+		//Update players Credits from this kill
+		Player = Cast<AARCharacter>(Killer);
+		UARAttributeComponent* VictomAttributesComp = UARAttributeComponent::GetAttributesComp(VictimActor);
+
+		if (Player && VictomAttributesComp)
+		{
+			AController* MyController = Player->GetController(); // Get the controller from the actor
+			if (MyController)
+			{
+				AARPlayerState* MyPlayerState = MyController->GetPlayerState<AARPlayerState>();
+				if (MyPlayerState)
+				{
+					MyPlayerState->AddCredits(VictomAttributesComp->KillCreditValue);
+					// Use MyPlayerState
+				}
+			}
+		}
+
 
 		UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 

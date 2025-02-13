@@ -17,6 +17,8 @@ AARItemChest::AARItemChest()
 	LidMesh->SetupAttachment(BaseMesh);
 
 	TargetPitch = 110.0f;
+
+	bLidOpen = false;
 }
 
 void AARItemChest::Interact_Implementation(APawn* InstigatorPawn)
