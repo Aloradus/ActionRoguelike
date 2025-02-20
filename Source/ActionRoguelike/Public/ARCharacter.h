@@ -14,6 +14,8 @@ class UInputMappingContext;
 class UARInteractionComponent;
 class UAnimMontage;
 class UARAttributeComponent;
+class UUserWidget;
+class UARActionComponent;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARCharacter : public ACharacter
@@ -58,6 +60,9 @@ protected:
 	UARInteractionComponent* InteractionComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UARActionComponent* ActionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UARAttributeComponent* AttributesComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
@@ -87,6 +92,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* IAInteract;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
+	UInputAction* IASprint;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -115,6 +123,8 @@ protected:
 
 	void PrimaryInteract(const FInputActionValue& Value);
 
+	void Sprint(const FInputActionValue& Value);
+
 	FRotator GetCrossHairRotation(FVector FromLocation);
 
 	//void AddControllerYawInput(float Value);
@@ -131,5 +141,7 @@ public:
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100);
+
+private:
 
 };

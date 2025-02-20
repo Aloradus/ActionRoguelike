@@ -12,6 +12,8 @@
 #include "Animation/AnimMontage.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ARAttributeComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "ARActionComponent.h"
 
 // Sets default values
 AARCharacter::AARCharacter()
@@ -30,6 +32,8 @@ AARCharacter::AARCharacter()
 
 	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
 	AttributesComp->Initalize(false, Cast<APawn>(this));
+
+	ActionComp = CreateDefaultSubobject<UARActionComponent>("ActionComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	bUseControllerRotationYaw = false;
@@ -62,6 +66,7 @@ void AARCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(IAInteract, ETriggerEvent::Triggered, this, &AARCharacter::PrimaryInteract);
 		EnhancedInputComponent->BindAction(IATeleportMove, ETriggerEvent::Triggered, this, &AARCharacter::TeleportMove);
 		EnhancedInputComponent->BindAction(IASecondaryAttack, ETriggerEvent::Triggered, this, &AARCharacter::SecondaryAttack);
+		EnhancedInputComponent->BindAction(IASprint, ETriggerEvent::Triggered, this, &AARCharacter::Sprint);
 	}
 
 	//PlayerInputComponent->BindAxis("MoveForward", this, &AARCharacter::MoveForward);
@@ -173,6 +178,23 @@ void AARCharacter::PrimaryInteract(const FInputActionValue& Value)
 {
 	InteractionComp->PrimaryInteract();
 }
+
+void AARCharacter::Sprint(const FInputActionValue& Value)
+{
+	bool bSprintPressed = Value.Get<bool>();
+	
+	//UE_LOG(LogTemp, Warning, TEXT("Sprint pressed Value is: %s"), bSprintPressed ? TEXT("Pressed") : TEXT("Not Pressed"));
+
+	if (bSprintPressed)
+	{
+		ActionComp->StartActionByName(this, "Sprint");
+	}
+	else
+	{
+		ActionComp->StopActionByName(this, "Sprint");
+	}
+}
+
 
 void AARCharacter::PrimaryAttack_TimeElapsed()
 {
