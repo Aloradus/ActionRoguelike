@@ -25,14 +25,8 @@ bool UARGameplayFunctionLibrary::ApplyDirectionalDamage(AActor* DamageCauser, AA
 		//If we don't pass the BoneName it will check the root of the component / mesh hit
 		if (HitComp && HitComp->IsSimulatingPhysics(HitResult.BoneName))
 		{
-
-			//(Direction = Target - Origin)
-			//Always start with target for direction vectors 
-			FVector Direction = HitResult.TraceEnd - HitResult.TraceStart;
-			Direction.Normalize(); // Normalize so the magnitude isn't changed by the traces length.
-
 		//Invert vector because the hit result points to the direcion it was hit from.
-			HitComp->AddImpulseAtLocation(Direction * 100000.f, HitResult.ImpactPoint, HitResult.BoneName);
+			HitComp->AddImpulseAtLocation(-HitResult.ImpactNormal * 100000.f, HitResult.ImpactPoint, HitResult.BoneName);
 		}
 		return true;
 	}

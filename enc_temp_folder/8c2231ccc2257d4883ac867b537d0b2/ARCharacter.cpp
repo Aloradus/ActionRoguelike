@@ -150,7 +150,25 @@ void AARCharacter::PrimaryAttack(const FInputActionValue& Value)
 
 void AARCharacter::TeleportMove(const FInputActionValue& Value)
 {
-	ActionComp->StartActionByName(this, "Teleport");
+	PlayAnimMontage(AttackAnim);
+	GetWorldTimerManager().SetTimer(TimerHandle_TeleportMove, this, &AARCharacter::TeleportMove_TimeElapsed, .02f);
+}
+
+void AARCharacter::TeleportMove_TimeElapsed()
+{
+	//Calc spawn rotation & location
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
+	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
+	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
+
+	//Spawn params
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	//Spawn projectile
+	GetWorld()->SpawnActor<AActor>(TeleportProjectile, SpawnTM, SpawnParams);
 }
 
 void AARCharacter::MoveJump(const FInputActionValue& Value)
@@ -179,10 +197,72 @@ void AARCharacter::Sprint(const FInputActionValue& Value)
 	}
 }
 
+
+void AARCharacter::PrimaryAttack_TimeElapsed()
+{
+	//Calc spawn rotation & location
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
+	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
+	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
+
+	//Spawn params
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	//Spawn projectile
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+}
+
 void AARCharacter::SecondaryAttack(const FInputActionValue& Value)
 {
-	ActionComp->StartActionByName(this, "SecondaryAttack");
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack,this, &AARCharacter::SecondaryAttack_TimeElapsed, .2f);
 }
+
+void AARCharacter::SecondaryAttack_TimeElapsed()
+{
+	//Calc spawn rotation & location
+	FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
+	FRotator SpawnRotation = GetCrossHairRotation(HandLocation);
+	FTransform SpawnTM = FTransform(SpawnRotation, HandLocation);
+
+	//Spawn params
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	//Spawn projectile
+	GetWorld()->SpawnActor<AActor>(SecondaryProjectile, SpawnTM, SpawnParams);
+}
+
+FRotator AARCharacter::GetCrossHairRotation(FVector FromLocation)
+{
+	//Calculate aim location
+	FVector CameraLocation = CameraComp->GetComponentLocation();
+	FVector AimLocation = CameraLocation + (CameraComp->GetComponentRotation().Vector() * 5000.0f);
+
+	FHitResult Hit;
+	FCollisionObjectQueryParams ObjectQueryParams;
+	FCollisionQueryParams CollisionQueryParams;
+	CollisionQueryParams.AddIgnoredActor(this);
+
+	bool bBlockingHit = GetWorld()->LineTraceSingleByObjectType(Hit, CameraLocation, AimLocation, ObjectQueryParams, CollisionQueryParams);
+
+	//If an object is in the player's cross hairs, aim at impact point.
+	if (bBlockingHit)
+	{
+		AimLocation = Hit.ImpactPoint;
+	}
+
+	FRotator ReturnRotation = UKismetMathLibrary::FindLookAtRotation(FromLocation, AimLocation);
+
+	return ReturnRotation;
+}
+
 
 // Called every frame
 void AARCharacter::Tick(float DeltaTime)

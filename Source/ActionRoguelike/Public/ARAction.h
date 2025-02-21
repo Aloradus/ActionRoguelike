@@ -6,6 +6,8 @@
 #include "UObject/NoExportTypes.h"
 #include "ARAction.generated.h"
 
+class UWorld;
+
 /**
  * Must mark as blueprintable otherwise we cannot make child classes from UARAction... As a blueprint
  */
@@ -25,5 +27,7 @@ class ACTIONROGUELIKE_API UARAction : public UObject
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Action")
 	FName ActionName;
+
+	UWorld* GetWorld() const override;
 
 };

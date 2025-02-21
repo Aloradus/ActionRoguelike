@@ -31,6 +31,25 @@ public:
 
 protected:
 
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	FName HandSocketName = "Muzzle_01";
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> ProjectileClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> SecondaryProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> TeleportProjectile;
+
+	UPROPERTY(EditAnywhere, Category = "Attack");
+	UAnimMontage* AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
+
+	FTimerHandle TimerHandle_TeleportMove;
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
@@ -46,7 +65,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UARAttributeComponent* AttributesComp;
 
-#pragma region Inputs
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* ARCharacterMappingContext;
 
@@ -76,9 +94,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input");
 	UInputAction* IASprint;
-#pragma endregion
-	
-	// 
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -93,15 +109,25 @@ protected:
 
 	void PrimaryAttack(const FInputActionValue& Value);
 
+	void PrimaryAttack_TimeElapsed();
+
 	void SecondaryAttack(const FInputActionValue& Value);
 
+	void SecondaryAttack_TimeElapsed();
+
 	void TeleportMove(const FInputActionValue& Value);
+
+	void TeleportMove_TimeElapsed();
 
 	void MoveJump(const FInputActionValue& Value);
 
 	void PrimaryInteract(const FInputActionValue& Value);
 
 	void Sprint(const FInputActionValue& Value);
+
+	FRotator GetCrossHairRotation(FVector FromLocation);
+
+	//void AddControllerYawInput(float Value);
 
 	virtual void PostInitializeComponents() override;
 

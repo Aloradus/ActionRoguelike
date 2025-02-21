@@ -58,6 +58,12 @@ UARActionComponent::UARActionComponent()
 void UARActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Add our default actions
+	for (TSubclassOf<UARAction> ActionClass : DefaultActions)
+	{
+		AddAction(ActionClass);
+	}
 }
 
 
