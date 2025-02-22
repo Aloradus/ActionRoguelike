@@ -13,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "BrainComponent.h"
 #include "ARWorldUserWidget.h"
+#include "ARActionComponent.h"
 
 // Sets default values
 AARAICharacter::AARAICharacter()
@@ -24,6 +25,8 @@ AARAICharacter::AARAICharacter()
 
 	AttributesComp = CreateDefaultSubobject<UARAttributeComponent>("AttributesComp");
 	AttributesComp->Initalize(true, Cast<APawn>(this));
+
+	ActionComp = CreateDefaultSubobject<UARActionComponent>("ActionComp");
 
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 

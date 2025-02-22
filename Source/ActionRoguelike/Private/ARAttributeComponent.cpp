@@ -66,8 +66,8 @@ bool UARAttributeComponent::ApplyHealthChange(AActor* InstigatingActor, float De
 	
 
 	float OldHealth = Health;
-	Health = FMath::Clamp(Health += Delta, 0.f, MaxHealth);
-	float ActualDelta = OldHealth - Health;
+	Health = FMath::Clamp(Health -= Delta, 0.f, MaxHealth);
+	float ActualDelta = Health - OldHealth;
 
 	if (ActualDelta != 0)
 	{

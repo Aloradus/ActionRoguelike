@@ -12,6 +12,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "ARGameplayFunctionLibrary.h"
+#include "ARActionComponent.h"
 
 // Sets default values
 AARProjectileBase::AARProjectileBase()
@@ -32,8 +33,10 @@ AARProjectileBase::AARProjectileBase()
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->InitialSpeed = 2000.0f;
 	MovementComp->ProjectileGravityScale = 0.0f;
-	MovementComp->bRotationFollowsVelocity = true;
+	MovementComp->bRotationFollowsVelocity = true; //must be enabled for parry to work
 	MovementComp->bInitialVelocityInLocalSpace = true;
+
+	Damage = -5.f;
 }
 
 void AARProjectileBase::PostInitializeComponents()
@@ -54,12 +57,13 @@ void AARProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 
 	if (OtherActor && OtherActor != GetInstigator())
 	{
-		//UARAttributeComponent* AttributesComp = Cast<UARAttributeComponent>(OtherActor->GetComponentByClass(UARAttributeComponent::StaticClass()));
-		//if (AttributesComp)
-		//{
-		//	AttributesComp->ApplyHealthChange(GetInstigator(), Damage);
-		//	Destroy();
-		//}
+		UARActionComponent* ActionComp = Cast<UARActionComponent>(OtherActor->GetComponentByClass(UARActionComponent::StaticClass()));
+		if (ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			MovementComp->Velocity = -MovementComp->Velocity;
+			SetInstigator(Cast<APawn>(OtherActor)); //Flip ownership. So we recognize the parryer to the damager.
+			return;
+		}
 
 		if (UARGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 		{

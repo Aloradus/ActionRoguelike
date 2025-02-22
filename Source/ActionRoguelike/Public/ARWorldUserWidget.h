@@ -26,7 +26,7 @@ class ACTIONROGUELIKE_API UARWorldUserWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* ParentSizeBox;
 
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	FVector WorldOffset;
 
 	UPROPERTY(BlueprintReadOnly, Category = "UI")

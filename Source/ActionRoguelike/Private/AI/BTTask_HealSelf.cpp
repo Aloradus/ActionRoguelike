@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTTask_HealSelf::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 			if (AttributesComp)
 			{
-				AttributesComp->ApplyHealthChange(MyPawn, HealAmount);
+				AttributesComp->ApplyHealthChange(MyPawn, -HealAmount);
 				return EBTNodeResult::Succeeded;
 			}
 		}

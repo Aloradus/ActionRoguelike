@@ -10,7 +10,7 @@ bool UARGameplayFunctionLibrary::ApplyDamage(AActor* DamageCauser, AActor* Targe
 
 	if (AttributesComp)
 	{
-		return AttributesComp->ApplyHealthChange(DamageCauser, -DamageAmount);
+		return AttributesComp->ApplyHealthChange(DamageCauser, DamageAmount);
 	}
 	return false;
 }
