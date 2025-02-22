@@ -4,7 +4,7 @@
 #include "ARActionComponent.h"
 #include "ARAction.h"
 
-void UARActionComponent::AddAction(TSubclassOf<UARAction> ActionClass)
+void UARActionComponent::AddAction(AActor* Instigator, TSubclassOf<UARAction> ActionClass)
 {
 	if (!ensure(ActionClass))
 	{
@@ -16,6 +16,11 @@ void UARActionComponent::AddAction(TSubclassOf<UARAction> ActionClass)
 	if (ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+		//Added insure because this hsould always be true. If it's implented or changed later-- add this so it doesn't fail silently.
+		if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+		{
+			NewAction->StartAction(Instigator);
+		}
 	}
 }
 
@@ -73,8 +78,8 @@ void UARActionComponent::BeginPlay()
 
 	//Add our default actions
 	for (TSubclassOf<UARAction> ActionClass : DefaultActions)
-	{
-		AddAction(ActionClass);
+	{	//Assuyme actor we're attached to is our owner
+		AddAction(GetOwner(), ActionClass);
 	}
 }
 
@@ -86,6 +91,17 @@ void UARActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	FString DebugMsg = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMsg);
+
+}
+
+void UARActionComponent::RemoveAction(UARAction* ActionToRemove)
+{
+	if (!ensure(ActionToRemove && !ActionToRemove->IsRunning()))
+	{
+		return;
+	}
+
+	Actions.Remove(ActionToRemove);
 
 }
 

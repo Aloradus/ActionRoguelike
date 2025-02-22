@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "ARPlayerState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreditChange, float, Delta, float, CreditsHeld);
+
 /**
  * 
  */
@@ -18,6 +20,10 @@ class ACTIONROGUELIKE_API AARPlayerState : public APlayerState
 
 	AARPlayerState();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnCreditChange OnCreditChage;
+
+	//Not necessary - Read more on Replicated Properties
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
     UFUNCTION()
@@ -33,7 +39,7 @@ class ACTIONROGUELIKE_API AARPlayerState : public APlayerState
 	void AddCredits(float CreditsToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
-	void RemoveCredits(float CreditsToAdd);
+	bool RemoveCredits(float CreditsToRemove);
 
 	virtual void PostInitializeComponents() override;
 

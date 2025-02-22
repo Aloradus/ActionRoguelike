@@ -40,12 +40,21 @@ float AARPlayerState::GetCredits()
 void AARPlayerState::AddCredits(float CreditsToAdd)
 {
 	SetCredits(Credits + CreditsToAdd);
+
+	OnCreditChage.Broadcast(CreditsToAdd, Credits);
 }
 
 //adjust to bool so we return true if this is succesful
-void AARPlayerState::RemoveCredits(float CreditsToAdd)
+bool AARPlayerState::RemoveCredits(float CreditsToRemove)
 {
-	SetCredits(Credits - CreditsToAdd);
+	if (CreditsToRemove >= Credits)
+	{
+		SetCredits(Credits - CreditsToRemove);
+		OnCreditChage.Broadcast(-CreditsToRemove, Credits);
+		return true;
+	}
+
+	return false;
 }
 
 void AARPlayerState::PostInitializeComponents()

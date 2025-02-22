@@ -13,6 +13,7 @@
 #include "Sound/SoundCue.h"
 #include "ARGameplayFunctionLibrary.h"
 #include "ARActionComponent.h"
+#include "ARActionEffect.h"
 
 // Sets default values
 AARProjectileBase::AARProjectileBase()
@@ -68,6 +69,12 @@ void AARProjectileBase::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (UARGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 		{
 			Explode();
+
+			if (ActionComp && DamageActionEffectClass)
+			{
+				ActionComp->AddAction(GetInstigator(), DamageActionEffectClass);
+			}
+
 		}
 	}
 }

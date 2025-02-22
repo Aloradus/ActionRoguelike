@@ -35,6 +35,10 @@ class ACTIONROGUELIKE_API UARAction : public UObject
 
 	public:
 
+	//Start immediately when added?
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	bool bAutoStart;
+
 	UFUNCTION(BlueprintCallable, Category = Action)
 	bool IsRunning() const;
 

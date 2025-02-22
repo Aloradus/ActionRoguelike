@@ -12,6 +12,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UAudioComponent;
 class USoundCue;
+class UARActionEffect;
 
 UCLASS()
 class ACTIONROGUELIKE_API AARProjectileBase : public AActor
@@ -23,6 +24,9 @@ public:
 	AARProjectileBase();
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<UARActionEffect> DamageActionEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	FGameplayTag ParryTag;
