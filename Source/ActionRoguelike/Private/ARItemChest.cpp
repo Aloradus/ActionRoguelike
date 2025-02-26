@@ -33,6 +33,17 @@ void AARItemChest::BeginPlay()
 	
 }
 
+
+void AARItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpen();
+}
+
+void AARItemChest::OnRep_LidOpen()
+{
+	float CurrPitch = bLidOpen ? TargetPitch : 0.0f;
+	LidMesh->SetRelativeRotation(FRotator(CurrPitch, 0.f, 0.f));
+}
 // Called every frame
 void AARItemChest::Tick(float DeltaTime)
 {

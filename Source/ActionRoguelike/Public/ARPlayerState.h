@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "ARPlayerState.generated.h"
 
+class UARSaveGame;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreditChange, float, Delta, float, CreditsHeld);
 
 /**
@@ -43,10 +45,16 @@ class ACTIONROGUELIKE_API AARPlayerState : public APlayerState
 
 	virtual void PostInitializeComponents() override;
 
-	protected:
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(UARSaveGame* SaveObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(UARSaveGame* SaveObject);
+
+protected:
 	
 
-	private:
+private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_Credits, Category = PlayerState, BlueprintGetter = GetCredits)
     float Credits;

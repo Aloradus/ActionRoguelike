@@ -4,6 +4,7 @@
 #include "ARPlayerState.h"
 #include "UObject/CoreNet.h"
 #include "Net/UnrealNetwork.h"
+#include "ARSaveGame.h"
 
 AARPlayerState::AARPlayerState()
 {
@@ -60,4 +61,20 @@ bool AARPlayerState::RemoveCredits(float CreditsToRemove)
 void AARPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
+
+void AARPlayerState::SavePlayerState_Implementation(UARSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		SaveObject->Credits = Credits;
+	}
+}
+
+void AARPlayerState::LoadPlayerState_Implementation(UARSaveGame* SaveObject)
+{
+	if (SaveObject)
+	{
+		Credits = SaveObject->Credits;
+	}
 }

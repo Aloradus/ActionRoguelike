@@ -48,6 +48,15 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void OnPawnSeen(APawn* PawnSeen);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Reactions")
+	TSubclassOf<UARWorldUserWidget> PlayerSpottedWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Reactions")
+	FVector ReactionWidgetOffset;
+
+	UPROPERTY()
+	UARWorldUserWidget* ActiveReactionWidget;
+
 	UFUNCTION(BlueprintCallable)
 	void OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta);
 

@@ -16,7 +16,7 @@ class ACTIONROGUELIKE_API AARItemChest : public AActor, public IARInteractiveInt
 	
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	bool bLidOpen;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -31,6 +31,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+	void OnRep_LidOpen();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -39,6 +42,8 @@ public:
 	AARItemChest();
 
 	void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	void OnActorLoaded_Implementation();
 
 private:
 

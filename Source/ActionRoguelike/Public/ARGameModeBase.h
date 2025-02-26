@@ -11,6 +11,7 @@ class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 class UCurveFloat;
 class AActor;
+class UARSaveGame;
 
 
 /**
@@ -22,6 +23,11 @@ class ACTIONROGUELIKE_API AARGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 	protected:
+
+	FString SlotName;
+
+	UPROPERTY()
+	UARSaveGame* CurrentSaveGame;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
@@ -50,11 +56,26 @@ class ACTIONROGUELIKE_API AARGameModeBase : public AGameModeBase
 
 	AARGameModeBase();
 
+	/**
+	 * Initialize the game.
+	 * The GameMode's InitGame() event is called before any other functions (including PreInitializeComponents() )
+	 * and is used by the GameMode to initialize parameters and spawn its helper classes.
+	 * @warning: this is called before actors' PreInitializeComponents.
+	 */
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	virtual void StartPlay() override;
 
 	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 	UFUNCTION(Exec)
 	void KillAll();
+
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
 
 };

@@ -47,9 +47,32 @@ void AARAICharacter::SetTargetActor(AActor* NewTarget)
 //Pawn sensing is deprecated. AI Perception should be used instead.
 void AARAICharacter::OnPawnSeen(APawn* PawnSeen)
 {
-	SetTargetActor(PawnSeen);
+	//If we're seeing this actor for the first time
+	if (ensure(AIController))
+	{
+		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+		APawn* TargetPawn = Cast<APawn>(BBComp->GetValueAsObject("TargetActor"));
 
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		if (TargetPawn == nullptr || (TargetPawn && TargetPawn != PawnSeen))
+		{
+			if (PlayerSpottedWidgetClass)
+			{
+				if (ActiveReactionWidget)
+				{
+					ActiveReactionWidget->RemoveFromParent();
+				}
+
+				ActiveReactionWidget = CreateWidget<UARWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+				ActiveReactionWidget->InitializeWidget(ReactionWidgetOffset, this);
+				ActiveReactionWidget->AddToViewport();
+
+			}
+			//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		}
+	}
+
+
+	SetTargetActor(PawnSeen);
 }
 
 void AARAICharacter::OnHealthChange(AActor* InstigatorActor, UARAttributeComponent* OwningComp, float NewHealth, float MaxHealth, float Delta)
